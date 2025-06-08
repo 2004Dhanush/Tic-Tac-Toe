@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Colorful Tic-Tac-Toe</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(to right, #fc466b, #3f5efb);
+      color: #fff;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    .game-container {
+      margin-top: 50px;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-gap: 10px;
+      margin: 30px auto;
+      width: 320px;
+    }
+
+    .cell {
+      width: 100px;
+      height: 100px;
+      background-color: #ffffff22;
+      color: white;
+      font-size: 2em;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      border-radius: 10px;
+      transition: 0.3s;
+    }
+
+    .cell:hover {
+      background-color: #ffffff44;
+    }
+
+    .players input {
+      padding: 10px;
+      margin: 10px;
+      border-radius: 10px;
+      border: none;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      border: none;
+      border-radius: 10px;
+      background-color: #fff;
+      color: #333;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .status {
+      font-size: 20px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <h1>Tic-Tac-Toe</h1>
+    <div class="players">
+      <input type="text" id="playerName" placeholder="Enter your name" />
+      <button onclick="startGame()">Start vs Computer</button>
+    </div>
+    <div class="board" id="board"></div>
+    <div class="status" id="status"></div>
+    <button id="resetBtn" onclick="resetGame()">Reset Game</button>
+  </div>
+
+  <script>
+    let board = ["", "", "", "", "", "", "", "", ""];
+    let currentPlayer = "X";
+    let gameOver = false;
+
+    function startGame() {
+      const playerName = document.getElementById("playerName").value || "Player";
+      document.getElementById("status").innerText = `${playerName}'s turn (X)`;
+      drawBoard();
+    }
+
+    function drawBoard() {
+      const boardEl = document.getElementById("board");
+      boardEl.innerHTML = "";
+      board.forEach((val, i) => {
+        const cell = document.createElement("div");
+        cell.classList.add("cell");
+        cell.innerText = val;
+        cell.onclick = () => handleClick(i);
+        boardEl.appendChild(cell);
+      });
+    }
+
+    function handleClick(i) {
+      if (board[i] !== "" || gameOver) return;
+      board[i] = currentPlayer;
+      drawBoard();
+      checkResult();
+      if (!gameOver) {
+        currentPlayer = currentPlayer === "X" ? "O" : "X";
+        if (currentPlayer === "O") {
+          setTimeout(computerMove, 500);
+        } else {
+          document.getElementById("status").innerText = `Your turn (X)`;
+        }
+      }
+    }
+
+    function computerMove() {
+      let available = board.map((val, i) => val === "" ? i : null).filter(i => i !== null);
+      let move = available[Math.floor(Math.random() * available.length)];
+      board[move] = "O";
+      drawBoard();
+      checkResult();
+      if (!gameOver) currentPlayer = "X";
+      document.getElementById("status").innerText = `Your turn (X)`;
+    }
+
+    function checkResult() {
+      const winCombos = [
+        [0,1,2],[3,4,5],[6,7,8],
+        [0,3,6],[1,4,7],[2,5,8],
+        [0,4,8],[2,4,6]
+      ];
+      for (let combo of winCombos) {
+        const [a,b,c] = combo;
+        if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+          document.getElementById("status").innerText = `${board[a]} wins!`;
+          gameOver = true;
+          return;
+        }
+      }
+      if (!board.includes("")) {
+        document.getElementById("status").innerText = "Draw!";
+        gameOver = true;
+      }
+    }
+
+    function resetGame() {
+      board = ["", "", "", "", "", "", "", "", ""];
+      currentPlayer = "X";
+      gameOver = false;
+      drawBoard();
+      document.getElementById("status").innerText = `Game reset. Start again!`;
+    }
+  </script>
+</body>
+</html>
