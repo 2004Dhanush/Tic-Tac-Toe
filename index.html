@@ -1,108 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Colorful Tic Tac Toe</title>
   <style>
     body {
       font-family: 'Comic Sans MS', cursive, sans-serif;
       background: linear-gradient(135deg, #00c6ff, #0072ff);
-      color: #fff;
-      text-align: center;
-      margin: 0;
-      padding: 0;
+      color: #fff; text-align: center; margin: 0; padding: 0;
     }
-    h2, h3 { margin-top: 20px; }
     .section { display: none; padding: 30px; }
     .active { display: block; }
     input, button {
-      padding: 12px;
-      margin: 10px;
-      font-size: 1rem;
-      border-radius: 8px;
-      border: none;
-      outline: none;
+      padding: 12px; margin: 10px; font-size: 1rem;
+      border-radius: 8px; border: none; outline: none;
     }
-    input {
-      width: 200px;
-      text-align: center;
-      border: 2px solid #fff;
-    }
+    input { width: 200px; text-align: center; border: 2px solid #fff; }
     button {
-      background-color: #ff6b81;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
+      background-color: #ff6b81; color: white;
+      font-weight: bold; cursor: pointer;
       transition: background-color 0.3s;
     }
     button:hover { background-color: #ff4757; }
     .board {
-      display: grid;
-      grid-template-columns: repeat(3, 100px);
-      gap: 10px;
-      justify-content: center;
-      margin: 20px auto;
+      display: grid; grid-template-columns: repeat(3, 100px);
+      gap: 10px; justify-content: center; margin: 20px auto;
     }
     .cell {
-      width: 100px;
-      height: 100px;
-      font-size: 2.5rem;
-      background: #fff;
-      color: #222;
-      cursor: pointer;
-      border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 100px; height: 100px; font-size: 2.5rem;
+      background: #fff; color: #222; cursor: pointer;
+      border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      display: flex; align-items: center; justify-content: center;
       transition: transform 0.2s;
     }
-    .cell:hover { transform: scale(1.1); }
+    .cell:hover { transform: scale(1.05); }
     .cell.X { color: #3498db; }
     .cell.O { color: #e74c3c; }
     .popup {
-      display: none;
-      position: fixed;
-      top: 30%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: #fff;
-      color: #333;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+      display: none; position: fixed;
+      top: 30%; left: 50%; transform: translate(-50%, -50%);
+      background: #fff; color: #333; padding: 30px;
+      border-radius: 12px; box-shadow: 0 0 15px rgba(0,0,0,0.5);
       z-index: 1000;
     }
-    .popup p {
-      font-size: 1.5rem;
-      margin-bottom: 20px;
-    }
+    .popup p { font-size: 1.5rem; margin-bottom: 20px; }
     .popup button {
-      background: #1dd1a1;
-      margin: 10px;
+      background: #1dd1a1; margin: 10px;
     }
     .popup button:hover { background: #10ac84; }
   </style>
 </head>
 <body>
+
+  <!-- NAME ENTRY -->
   <div id="namePage" class="section active">
     <h2>🎮 Enter Your Name</h2>
-    <input type="text" id="playerNameInput" placeholder="Your name">
-    <br><button onclick="submitName()">Continue</button>
+    <input type="text" id="playerNameInput" placeholder="Your name" />
+    <br />
+    <button onclick="submitName()">Continue</button>
   </div>
 
+  <!-- MODE SELECTION -->
   <div id="modePage" class="section">
     <h2>👋 Welcome, <span id="displayName"></span>!</h2>
     <button onclick="selectMode('computer')">🤖 Play vs Computer</button>
     <button onclick="selectMode('friend')">🧑‍🤝‍🧑 Play with Friend</button>
   </div>
 
+  <!-- COMPUTER GAME -->
   <div id="computerGamePage" class="section">
     <h2>🤖 Tic-Tac-Toe vs Computer</h2>
     <div class="board" id="computerBoard"></div>
   </div>
 
+  <!-- FRIEND MODE -->
   <div id="friendRoomPage" class="section">
     <h2>🎭 Play with Friend</h2>
     <button onclick="showCreateRoom()">Create Room</button>
@@ -111,134 +83,184 @@
 
   <div id="createRoomPage" class="section">
     <h3>🔐 Create Room</h3>
-    <input type="text" id="createRoomId" placeholder="Room ID">
-    <br>
-    <input type="password" id="createRoomPassword" placeholder="Password">
-    <br>
+    <input type="text" id="createRoomId" placeholder="Room ID" /><br/>
+    <input type="password" id="createRoomPassword" placeholder="Password" /><br/>
     <button onclick="createRoom()">Create</button>
   </div>
 
   <div id="joinRoomPage" class="section">
     <h3>🔑 Join Room</h3>
-    <input type="text" id="joinRoomId" placeholder="Room ID">
-    <br>
-    <input type="password" id="joinRoomPassword" placeholder="Password">
-    <br>
+    <input type="text" id="joinRoomId" placeholder="Room ID" /><br/>
+    <input type="password" id="joinRoomPassword" placeholder="Password" /><br/>
     <button onclick="joinRoom()">Join</button>
   </div>
 
+  <!-- FRIEND GAME -->
   <div id="friendGamePage" class="section">
     <h2>🧑‍🤝‍🧑 Playing with Friend</h2>
     <div class="board" id="friendBoard"></div>
   </div>
 
+  <!-- POPUP -->
   <div id="popup" class="popup">
     <p id="popupMessage"></p>
     <div id="popupButtons">
-      <button onclick="backToMenu()">↩ Back to Menu</button>
+      <!-- Buttons inserted dynamically -->
     </div>
   </div>
 
   <script src="/socket.io/socket.io.js"></script>
   <script>
     const socket = io();
-    let playerName = '';
-    let currentPlayer = 'X';
-    let cells = [];
+    let playerName = "", roomId = "", roomPass = "";
+    let playerSymbol = "", board = [], currentTurn = "";
 
-    function showSection(id) {
-      document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-    }
+    const sections = {
+      name: document.getElementById("namePage"),
+      mode: document.getElementById("modePage"),
+      comp: document.getElementById("computerGamePage"),
+      room: document.getElementById("friendRoomPage"),
+      create: document.getElementById("createRoomPage"),
+      join: document.getElementById("joinRoomPage"),
+      friend: document.getElementById("friendGamePage")
+    };
 
+    const showSection = key => {
+      Object.values(sections).forEach(s => s.classList.remove("active"));
+      sections[key].classList.add("active");
+    };
+
+    // Name Entry
     function submitName() {
-      playerName = document.getElementById('playerNameInput').value.trim();
-      if (!playerName) return alert('Enter a name');
-      document.getElementById('displayName').textContent = playerName;
-      showSection('modePage');
+      const v = document.getElementById("playerNameInput").value.trim();
+      if (!v) return alert("Please enter your name");
+      playerName = v;
+      document.getElementById("displayName").innerText = playerName;
+      showSection("mode");
     }
 
+    // Mode Selection
     function selectMode(mode) {
-      if (mode === 'computer') {
-        showSection('computerGamePage');
-        startComputerGame();
-      } else {
-        showSection('friendRoomPage');
-      }
+      if (mode === "computer") return startComputerGame();
+      roomId = roomPass = "";
+      showSection("room");
     }
 
-    function showCreateRoom() { showSection('createRoomPage'); }
-    function showJoinRoom() { showSection('joinRoomPage'); }
+    /* === Play vs Computer === */
+    function startComputerGame() {
+      board = Array(9).fill("");
+      currentTurn = "X";
+      renderBoard("computerBoard", handleCompClick);
+      showSection("comp");
+    }
+
+    function handleCompClick(i) {
+      if (board[i] || currentTurn !== "X") return;
+      board[i] = "X"; renderBoard("computerBoard");
+      if (checkWin("X")) return endGame(`${playerName} Wins!`);
+      if (board.every(c => c)) return endGame("It's a Draw!");
+      currentTurn = "O";
+      setTimeout(() => {
+        const empty = board.map((v,i)=>!v?i:-1).filter(i=>i>=0);
+        const pick = empty[Math.floor(Math.random()*empty.length)];
+        board[pick] = "O"; renderBoard("computerBoard");
+        if (checkWin("O")) return endGame("Computer Wins!");
+        if (board.every(c => c)) return endGame("It's a Draw!");
+        currentTurn = "X";
+      }, 500);
+    }
+
+    /* === Multiplayer Friend === */
+    function showCreateRoom() { showSection("create"); }
+    function showJoinRoom() { showSection("join"); }
 
     function createRoom() {
-      const id = document.getElementById('createRoomId').value.trim();
-      const pwd = document.getElementById('createRoomPassword').value.trim();
-      if (!id || !pwd) return alert('Enter room ID and password');
-      socket.emit('createRoom', { id, pwd, name: playerName });
+      roomId = document.getElementById("createRoomId").value.trim();
+      roomPass = document.getElementById("createRoomPassword").value.trim();
+      if (!roomId||!roomPass) return alert("Enter both room ID & password");
+      socket.emit("createRoom", {roomId, roomPass, playerName});
     }
 
     function joinRoom() {
-      const id = document.getElementById('joinRoomId').value.trim();
-      const pwd = document.getElementById('joinRoomPassword').value.trim();
-      if (!id || !pwd) return alert('Enter room ID and password');
-      socket.emit('joinRoom', { id, pwd, name: playerName });
+      roomId = document.getElementById("joinRoomId").value.trim();
+      roomPass = document.getElementById("joinRoomPassword").value.trim();
+      if (!roomId||!roomPass) return alert("Enter both room ID & password");
+      socket.emit("joinRoom", {roomId, roomPass, playerName});
     }
 
-    function startComputerGame() {
-      const board = document.getElementById('computerBoard');
-      board.innerHTML = '';
-      cells = Array(9).fill(null);
-      for (let i = 0; i < 9; i++) {
-        const cell = document.createElement('div');
-        cell.classList.add('cell');
-        cell.addEventListener('click', () => makeComputerMove(i));
-        board.appendChild(cell);
-      }
+    socket.on("roomCreated", () => alert(`Room ${roomId} created. Waiting...`));
+    socket.on("startFriendGame", ({ players, symbol }) => {
+      playerSymbol = symbol;
+      board = Array(9).fill("");
+      renderBoard("friendBoard", i => {
+        if (board[i] || playerSymbol !== currentTurn) return;
+        socket.emit("makeMove", {roomId, index: i});
+      });
+      showSection("friend");
+      currentTurn = "X";
+      endGame = msg => socket.emit("gameOver", {roomId, msg});
+    });
+
+    socket.on("opponentJoined", () => console.log("Opponent joined"));
+    socket.on("moveMade", ({ index, symbol }) => {
+      board[index] = symbol;
+      renderBoard("friendBoard");
+      if (checkWin(symbol)) return endGame(symbol === playerSymbol ? "You win!" : "Friend wins!");
+      if (board.every(c => c)) return endGame("It's a Draw!");
+      currentTurn = currentTurn === "X"?"O":"X";
+    });
+
+    socket.on("gameOver", ({ msg }) => endGame(msg));
+    socket.on("error", alert);
+
+    /* === Common Utility === */
+    const winPatterns = [
+      [0,1,2],[3,4,5],[6,7,8],
+      [0,3,6],[1,4,7],[2,5,8],
+      [0,4,8],[2,4,6]
+    ];
+
+    function checkWin(sym) {
+      return winPatterns.some(c=> c.every(i=> board[i] === sym));
     }
 
-    function makeComputerMove(i) {
-      if (cells[i]) return;
-      cells[i] = 'X';
-      updateBoard('computerBoard');
-      if (checkWin('X')) return showPopup(`${playerName} Wins!`);
-      if (cells.every(c => c)) return showPopup("It's a Draw!");
-      const empty = cells.map((c, i) => c ? null : i).filter(i => i !== null);
-      const compMove = empty[Math.floor(Math.random() * empty.length)];
-      cells[compMove] = 'O';
-      updateBoard('computerBoard');
-      if (checkWin('O')) return showPopup('Computer Wins!');
-      if (cells.every(c => c)) return showPopup("It's a Draw!");
-    }
-
-    function updateBoard(boardId) {
-      const board = document.getElementById(boardId);
-      Array.from(board.children).forEach((cell, i) => {
-        cell.textContent = cells[i] || '';
-        cell.classList.remove('X', 'O');
-        if (cells[i]) cell.classList.add(cells[i]);
+    function renderBoard(id, clickFn) {
+      const div = document.getElementById(id);
+      div.innerHTML = "";
+      board.forEach((v,i) => {
+        const c = document.createElement("div");
+        c.className = "cell";
+        if(v) c.classList.add(v);
+        c.textContent = v;
+        if (clickFn) c.onclick = () => clickFn(i);
+        div.appendChild(c);
       });
     }
 
-    function checkWin(p) {
-      const wins = [
-        [0,1,2],[3,4,5],[6,7,8],
-        [0,3,6],[1,4,7],[2,5,8],
-        [0,4,8],[2,4,6]
-      ];
-      return wins.some(combo => combo.every(i => cells[i] === p));
+    function endGame(msg) {
+      showPopup(msg, [
+        {text: "Rematch", cb: () => socket.emit("rematchRequest", roomId)},
+        {text: "Back to Menu", cb: () => { hidePopup(); showSection("mode"); }}
+      ]);
     }
 
-    function showPopup(msg) {
-      document.getElementById('popupMessage').textContent = msg;
-      document.getElementById('popup').style.display = 'block';
+    /* === Popup Control === */
+    function showPopup(message, buttons) {
+      document.getElementById("popupMessage").textContent = message;
+      const btns = document.getElementById("popupButtons");
+      btns.innerHTML = "";
+      buttons.forEach(b => {
+        const btn = document.createElement("button");
+        btn.textContent = b.text;
+        btn.onclick = b.cb;
+        btns.appendChild(btn);
+      });
+      document.getElementById("popup").style.display = "block";
     }
 
-    function backToMenu() {
-      document.getElementById('popup').style.display = 'none';
-      showSection('modePage');
+    function hidePopup() {
+      document.getElementById("popup").style.display = "none";
     }
-
-    // Socket.IO handlers for multiplayer will go here...
   </script>
 </body>
 </html>
