@@ -414,3 +414,229 @@
       if (name === "") return;
       playerName = name;
       displayName.inner
+
+        function startGameMode(mode) {
+      gameMode = mode;
+      if (mode === 'vs-computer') {
+        document.getElementById('modePage').classList.add('hidden');
+        document.getElementById('difficultyPage').classList.remove('hidden');
+      } else if (mode === 'local-2p') {
+        startGame();
+        gameTitle.textContent = '👥 Local Multiplayer';
+      }
+    }
+
+    function selectDifficulty(level) {
+      difficulty = level;
+      document.getElementById('difficultyPage').classList.add('hidden');
+      startGame();
+      gameTitle.textContent = `🤖 Play vs Computer (${level.toUpperCase()})`;
+    }
+
+    function startGame() {
+      board = ["", "", "", "", "", "", "", "", ""];
+      currentPlayer = "X";
+      gameOver = false;
+      renderBoard();
+      updateTurnIndicator();
+      document.getElementById('modePage').classList.add('hidden');
+      document.getElementById('gamePage').classList.remove('hidden');
+    }
+
+    function renderBoard() {
+      boardElement.innerHTML = "";
+      board.forEach((cell, index) => {
+        const button = document.createElement("button");
+        button.className = "cell";
+        if (cell) {
+          button.textContent = cell;
+          button.classList.add(cell);
+          button.disabled = true;
+        }
+        button.addEventListener("click", () => handleClick(index));
+        boardElement.appendChild(button);
+      });
+    }
+
+    function handleClick(index) {
+      if (board[index] !== "" || gameOver) return;
+      
+      board[index] = currentPlayer;
+      moveSound.play();
+      renderBoard();
+
+      if (checkWinner(currentPlayer)) {
+        winSound.play();
+        if (gameMode === 'vs-computer') {
+          showPopup(`🎉 ${playerName} Wins!`);
+          stats.wins++;
+        } else {
+          showPopup(`🎉 Player ${currentPlayer === 'X' ? '1' : '2'} Wins!`);
+        }
+        gameOver = true;
+        saveStats();
+      } else if (board.every(cell => cell !== "")) {
+        drawSound.play();
+        showPopup("🤝 It's a Draw!");
+        stats.draws++;
+        gameOver = true;
+        saveStats();
+      } else {
+        if (gameMode === 'vs-computer') {
+          currentPlayer = "O";
+          updateTurnIndicator();
+          setTimeout(computerMove, 800);
+        } else {
+          currentPlayer = currentPlayer === "X" ? "O" : "X";
+          updateTurnIndicator();
+        }
+      }
+    }
+
+    function computerMove() {
+      let availableMoves = board.map((val, idx) => val === "" ? idx : null).filter(v => v !== null);
+      let move;
+
+      if (difficulty === 'easy') {
+        move = availableMoves[Math.floor(Math.random() * availableMoves.length)];
+      } else if (difficulty === 'medium') {
+        if (Math.random() < 0.7) {
+          move = getBestMove();
+        } else {
+          move = availableMoves[Math.floor(Math.random() * availableMoves.length)];
+        }
+      } else if (difficulty === 'hard') {
+        move = getBestMove();
+      }
+
+      board[move] = "O";
+      computerSound.play();
+      renderBoard();
+
+      if (checkWinner("O")) {
+        winSound.play();
+        showPopup(`😔 Computer Wins!`);
+        stats.losses++;
+        gameOver = true;
+        saveStats();
+      } else if (board.every(cell => cell !== "")) {
+        drawSound.play();
+        showPopup("🤝 It's a Draw!");
+        stats.draws++;
+        gameOver = true;
+        saveStats();
+      } else {
+        currentPlayer = "X";
+        updateTurnIndicator();
+      }
+    }
+
+    function getBestMove() {
+      // Try to win
+      for (let i = 0; i < 9; i++) {
+        if (board[i] === "") {
+          board[i] = "O";
+          if (checkWinner("O")) {
+            board[i] = "";
+            return i;
+          }
+          board[i] = "";
+        }
+      }
+
+      // Try to block player
+      for (let i = 0; i < 9; i++) {
+        if (board[i] === "") {
+          board[i] = "X";
+          if (checkWinner("X")) {
+            board[i] = "";
+            return i;
+          }
+          board[i] = "";
+        }
+      }
+
+      // Take center if available
+      if (board[4] === "") return 4;
+
+      // Take corners
+      const corners = [0, 2, 6, 8].filter(i => board[i] === "");
+      if (corners.length > 0) return corners[Math.floor(Math.random() * corners.length)];
+
+      // Take any available
+      const available = board.map((val, idx) => val === "" ? idx : null).filter(v => v !== null);
+      return available[Math.floor(Math.random() * available.length)];
+    }
+
+    function checkWinner(player) {
+      const winPatterns = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6]
+      ];
+      return winPatterns.some(pattern =>
+        pattern.every(index => board[index] === player)
+      );
+    }
+
+    function updateTurnIndicator() {
+      if (gameMode === 'vs-computer') {
+        turnIndicator.textContent = currentPlayer === "X" ? "🎮 Your Turn (X)" : "🤖 Computer Thinking...";
+      } else {
+        turnIndicator.textContent = `👤 Player ${currentPlayer === 'X' ? '1' : '2'}'s Turn (${currentPlayer})`;
+      }
+    }
+
+    function showPopup(message) {
+      popupMessage.textContent = message;
+      popup.classList.add('active');
+      popupOverlay.classList.add('active');
+    }
+
+    function restartGame() {
+      popup.classList.remove('active');
+      popupOverlay.classList.remove('active');
+      startGame();
+    }
+
+    function backToMenu() {
+      popup.classList.remove('active');
+      popupOverlay.classList.remove('active');
+      document.getElementById('gamePage').classList.add('hidden');
+      document.getElementById('difficultyPage').classList.add('hidden');
+      document.getElementById('modePage').classList.remove('hidden');
+      updateStatsDisplay();
+    }
+
+    function updateStatsDisplay() {
+      document.getElementById('winsDisplay').textContent = stats.wins;
+      document.getElementById('lossesDisplay').textContent = stats.losses;
+      document.getElementById('drawsDisplay').textContent = stats.draws;
+    }
+
+    function saveStats() {
+      localStorage.setItem('tictactoeStats', JSON.stringify(stats));
+    }
+
+    function loadStats() {
+      const saved = localStorage.getItem('tictactoeStats');
+      if (saved) {
+        stats = JSON.parse(saved);
+      }
+    }
+
+    function resetStats() {
+      if (confirm("Are you sure you want to reset all stats?")) {
+        stats = { wins: 0, losses: 0, draws: 0 };
+        saveStats();
+        updateStatsDisplay();
+      }
+    }
+  </script>
+</body>
+</html>
