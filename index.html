@@ -3,124 +3,373 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Tic Tac Toe</title>
+  <title>Tic Tac Toe - Enhanced</title>
   <style>
-    body {
-      font-family: 'Comic Sans MS', cursive, sans-serif;
-      background: linear-gradient(135deg, #00c6ff, #0072ff);
-      color: #fff;
-      text-align: center;
+    * {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
     }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      text-align: center;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
     h2 {
-      margin-top: 20px;
+      font-size: 1.8rem;
+      margin: 20px 0;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
     }
+
     .section {
-      padding: 30px;
+      padding: 40px 30px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      margin: 20px 0;
     }
-    input, button {
-      padding: 12px;
+
+    .stats-card {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 20px;
+      border-radius: 15px;
+      margin: 15px 0;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .stat-item {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 15px;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      opacity: 0.8;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      display: block;
+    }
+
+    input, button, select {
+      padding: 12px 20px;
       margin: 10px;
       font-size: 1rem;
-      border-radius: 8px;
+      border-radius: 10px;
       border: none;
       outline: none;
-    }
-    input {
-      width: 200px;
-      text-align: center;
-      border: 2px solid #fff;
-    }
-    button {
-      background-color: #ff6b81;
-      color: white;
-      font-weight: bold;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: all 0.3s ease;
+      font-weight: 600;
     }
+
+    input {
+      width: 250px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.9);
+      color: #333;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    input:focus {
+      background: #fff;
+      border: 2px solid #667eea;
+      box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+    }
+
+    button {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      padding: 13px 30px;
+      font-size: 1.1rem;
+      min-width: 150px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
     button:hover {
-      background-color: #ff4757;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      background: linear-gradient(135deg, #764ba2, #667eea);
     }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .difficulty-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 20px 0;
+    }
+
+    .difficulty-btn {
+      padding: 10px 20px;
+      font-size: 1rem;
+      min-width: 120px;
+    }
+
+    .difficulty-btn.active {
+      background: linear-gradient(135deg, #f093fb, #f5576c);
+      box-shadow: 0 0 20px rgba(245, 87, 108, 0.5);
+    }
+
     .board {
       display: grid;
-      grid-template-columns: repeat(3, 100px);
-      gap: 10px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
       justify-content: center;
-      margin: 20px auto;
+      margin: 30px auto;
+      max-width: 350px;
     }
+
     .cell {
       width: 100px;
       height: 100px;
       font-size: 2.5rem;
-      background: #fff;
-      color: #222;
+      background: rgba(255, 255, 255, 0.95);
+      color: #333;
       cursor: pointer;
-      border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      border-radius: 15px;
+      border: none;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: transform 0.2s;
+      transition: all 0.3s ease;
+      font-weight: bold;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
-    .cell:hover {
-      transform: scale(1.1);
+
+    .cell:hover:not(:disabled) {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+      background: #fff;
     }
-    .cell.X { color: #3498db; }
-    .cell.O { color: #e74c3c; }
+
+    .cell:disabled {
+      cursor: not-allowed;
+    }
+
+    .cell.X {
+      color: #667eea;
+      font-weight: bold;
+    }
+
+    .cell.O {
+      color: #f5576c;
+      font-weight: bold;
+    }
+
+    .cell.winner {
+      background: linear-gradient(135deg, #f093fb, #f5576c);
+      color: white;
+      animation: pulse 0.5s;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
     .popup {
       display: none;
       position: fixed;
-      top: 30%;
+      top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: #fff;
+      background: white;
       color: #333;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+      padding: 40px 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
       z-index: 1000;
+      text-align: center;
+      min-width: 300px;
+      animation: slideIn 0.3s ease;
     }
+
+    @keyframes slideIn {
+      from {
+        transform: translate(-50%, -50%) scale(0.9);
+        opacity: 0;
+      }
+      to {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+      }
+    }
+
+    .popup-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+
+    .popup-overlay.active,
+    .popup.active {
+      display: block;
+    }
+
     .popup p {
       font-size: 1.5rem;
       margin-bottom: 20px;
+      font-weight: bold;
     }
+
     .popup button {
-      background: #1dd1a1;
-      margin: 10px;
+      margin: 8px;
+      min-width: 120px;
     }
-    .popup button:hover {
-      background: #10ac84;
+
+    .mode-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    .mode-btn {
+      padding: 15px 30px;
+      font-size: 1.1rem;
+      width: 100%;
+    }
+
+    .turn-indicator {
+      font-size: 1.3rem;
+      margin: 15px 0;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      font-weight: bold;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 480px) {
+      h1 { font-size: 2rem; }
+      h2 { font-size: 1.5rem; }
+      .cell { width: 80px; height: 80px; font-size: 2rem; }
+      .board { gap: 8px; max-width: 280px; }
+      input { width: 90%; }
     }
   </style>
 </head>
 <body>
+  <div class="container">
+    <!-- NAME ENTRY PAGE -->
+    <div id="namePage" class="section">
+      <h1>🎮 Tic-Tac-Toe</h1>
+      <h2>Enter Your Name</h2>
+      <input type="text" id="playerNameInput" placeholder="Your name" />
+      <button onclick="submitName()">Continue</button>
+    </div>
 
-  <!-- NAME ENTRY -->
-  <div id="namePage" class="section">
-    <h2>🎮 Enter Your Name</h2>
-    <input type="text" id="playerNameInput" placeholder="Your name" />
-    <br />
-    <button onclick="submitName()">Continue</button>
-  </div>
+    <!-- GAME MODE SELECTION PAGE -->
+    <div id="modePage" class="section hidden">
+      <h1>🎮 Tic-Tac-Toe</h1>
+      <h2>👋 Welcome, <span id="displayName"></span>!</h2>
+      
+      <div class="stats-card">
+        <div class="stat-item">
+          <span class="stat-label">Wins</span>
+          <span class="stat-value" id="winsDisplay">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Losses</span>
+          <span class="stat-value" id="lossesDisplay">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Draws</span>
+          <span class="stat-value" id="drawsDisplay">0</span>
+        </div>
+      </div>
 
-  <!-- MODE SELECTION -->
-  <div id="modePage" class="section" style="display:none;">
-    <h2>👋 Welcome, <span id="displayName"></span>!</h2>
-    <button onclick="startGame()">🤖 Play vs Computer</button>
-  </div>
+      <div class="mode-buttons">
+        <button class="mode-btn" onclick="startGameMode('vs-computer')">
+          🤖 Play vs Computer
+        </button>
+        <button class="mode-btn" onclick="startGameMode('local-2p')">
+          👥 Local Multiplayer (2 Players)
+        </button>
+      </div>
 
-  <!-- GAME BOARD -->
-  <div id="gamePage" class="section" style="display:none;">
-    <h2>🤖 Tic-Tac-Toe vs Computer</h2>
-    <div class="board" id="board"></div>
+      <button onclick="resetStats()" style="background: linear-gradient(135deg, #f5576c, #f093fb); margin-top: 20px;">
+        🔄 Reset Stats
+      </button>
+    </div>
+
+    <!-- DIFFICULTY SELECTION PAGE -->
+    <div id="difficultyPage" class="section hidden">
+      <h1>🤖 Play vs Computer</h1>
+      <h2>Select Difficulty</h2>
+      
+      <div class="difficulty-buttons">
+        <button class="difficulty-btn" onclick="selectDifficulty('easy')">🟢 Easy</button>
+        <button class="difficulty-btn" onclick="selectDifficulty('medium')">🟡 Medium</button>
+        <button class="difficulty-btn" onclick="selectDifficulty('hard')">🔴 Hard</button>
+      </div>
+
+      <p id="difficultyInfo" style="font-size: 0.9rem; opacity: 0.8; margin-top: 20px;"></p>
+
+      <button onclick="backToMenu()" style="background: rgba(255,255,255,0.2); margin-top: 20px;">
+        ⬅️ Back to Menu
+      </button>
+    </div>
+
+    <!-- GAME PAGE -->
+    <div id="gamePage" class="section hidden">
+      <h1>🎮 Tic-Tac-Toe</h1>
+      <h2 id="gameTitle"></h2>
+      <div class="turn-indicator" id="turnIndicator"></div>
+      <div class="board" id="board"></div>
+      <button onclick="backToMenu()" style="background: rgba(255,255,255,0.2); margin-top: 20px;">
+        ⬅️ Back to Menu
+      </button>
+    </div>
   </div>
 
   <!-- POPUP -->
+  <div id="popupOverlay" class="popup-overlay"></div>
   <div id="popup" class="popup">
     <p id="popupMessage"></p>
     <div id="popupButtons">
-      <button onclick="backToMenu()">↩ Back to Menu</button>
+      <button onclick="backToMenu()">↩️ Back to Menu</button>
+      <button onclick="restartGame()">🔄 Play Again</button>
     </div>
   </div>
 
@@ -132,111 +381,36 @@
 
   <!-- SCRIPT -->
   <script>
-    const playerNameInput = document.getElementById("playerNameInput");
-    const displayName = document.getElementById("displayName");
-    const boardElement = document.getElementById("board");
-    const popup = document.getElementById("popup");
-    const popupMessage = document.getElementById("popupMessage");
+    // DOM Elements
+    const playerNameInput = document.getElementById('playerNameInput');
+    const displayName = document.getElementById('displayName');
+    const boardElement = document.getElementById('board');
+    const popup = document.getElementById('popup');
+    const popupMessage = document.getElementById('popupMessage');
+    const popupOverlay = document.getElementById('popupOverlay');
+    const turnIndicator = document.getElementById('turnIndicator');
+    const gameTitle = document.getElementById('gameTitle');
 
-    const moveSound = document.getElementById("moveSound");
-    const computerSound = document.getElementById("computerSound");
-    const winSound = document.getElementById("winSound");
-    const drawSound = document.getElementById("drawSound");
+    // Audio
+    const moveSound = document.getElementById('moveSound');
+    const computerSound = document.getElementById('computerSound');
+    const winSound = document.getElementById('winSound');
+    const drawSound = document.getElementById('drawSound');
 
+    // Game Variables
     let board = ["", "", "", "", "", "", "", "", ""];
     let currentPlayer = "X";
     let playerName = "";
     let gameOver = false;
+    let gameMode = "vs-computer";
+    let difficulty = "medium";
+    let stats = { wins: 0, losses: 0, draws: 0 };
+
+    // Initialize
+    loadStats();
 
     function submitName() {
       const name = playerNameInput.value.trim();
       if (name === "") return;
       playerName = name;
-      displayName.innerText = name;
-      document.getElementById("namePage").style.display = "none";
-      document.getElementById("modePage").style.display = "block";
-    }
-
-    function startGame() {
-      board = ["", "", "", "", "", "", "", "", ""];
-      currentPlayer = "X";
-      gameOver = false;
-      renderBoard();
-      document.getElementById("modePage").style.display = "none";
-      document.getElementById("gamePage").style.display = "block";
-    }
-
-    function renderBoard() {
-      boardElement.innerHTML = "";
-      board.forEach((cell, index) => {
-        const div = document.createElement("div");
-        div.classList.add("cell");
-        if (cell) {
-          div.textContent = cell;
-          div.classList.add(cell);
-        }
-        div.addEventListener("click", () => handleClick(index));
-        boardElement.appendChild(div);
-      });
-    }
-
-    function handleClick(index) {
-      if (board[index] !== "" || gameOver) return;
-      board[index] = currentPlayer;
-      moveSound.play();
-      renderBoard();
-      if (checkWinner(currentPlayer)) {
-        winSound.play();
-        showPopup(`${playerName} Wins!`);
-        gameOver = true;
-      } else if (board.every(cell => cell !== "")) {
-        drawSound.play();
-        showPopup("It's a Draw!");
-        gameOver = true;
-      } else {
-        setTimeout(computerMove, 500);
-      }
-    }
-
-    function computerMove() {
-      let available = board.map((val, idx) => val === "" ? idx : null).filter(v => v !== null);
-      let choice = available[Math.floor(Math.random() * available.length)];
-      board[choice] = "O";
-      computerSound.play();
-      renderBoard();
-      if (checkWinner("O")) {
-        winSound.play();
-        showPopup("Computer Wins!");
-        gameOver = true;
-      } else if (board.every(cell => cell !== "")) {
-        drawSound.play();
-        showPopup("It's a Draw!");
-        gameOver = true;
-      }
-    }
-
-    function checkWinner(player) {
-      const winPatterns = [
-        [0,1,2], [3,4,5], [6,7,8],
-        [0,3,6], [1,4,7], [2,5,8],
-        [0,4,8], [2,4,6]
-      ];
-      return winPatterns.some(pattern =>
-        pattern.every(index => board[index] === player)
-      );
-    }
-
-    function showPopup(message) {
-      popupMessage.innerText = message;
-      popup.style.display = "block";
-    }
-
-    function backToMenu() {
-      popup.style.display = "none";
-      document.getElementById("gamePage").style.display = "none";
-      document.getElementById("modePage").style.display = "block";
-    }
-  </script>
-
-</body>
-</html>
+      displayName.inner
